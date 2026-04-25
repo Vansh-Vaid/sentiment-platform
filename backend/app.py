@@ -1,19 +1,7 @@
 from fastapi import FastAPI
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
+from textblob import TextBlob
 
 app = FastAPI()
-
-# Load lightweight model properly
-model_name = "sshleifer/tiny-distilbert-base-uncased-finetuned-sst-2-english"
-
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSequenceClassification.from_pretrained(model_name)
-
-sentiment_pipeline = pipeline(
-    "sentiment-analysis",
-    model=model,
-    tokenizer=tokenizer
-)
 
 @app.get("/")
 def home():
@@ -21,9 +9,17 @@ def home():
 
 @app.get("/analyze")
 def analyze(text: str):
-    result = sentiment_pipeline(text)[0]
+    analysis = TextBlob(text)
+    polarity = analysis.sentiment.polarity
+
+    if polarity > 0:
+        sentiment = "POSITIVE"
+    elif polarity < 0:
+        sentiment = "NEGATIVE"
+    else:
+        sentiment = "NEUTRAL"
 
     return {
-        "sentiment": result["label"],
-        "score": result["score"]
+        "sentiment": sentiment,
+        "score": round(abs(polarity), 2)
     }
