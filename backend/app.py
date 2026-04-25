@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from textblob import TextBlob
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
@@ -23,3 +24,11 @@ def analyze(text: str):
         "sentiment": sentiment,
         "score": round(abs(polarity), 2)
     }
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # allow all (for now)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
