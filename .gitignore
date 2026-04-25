@@ -1,0 +1,10 @@
+node_modules/
+backend/twitter-model/
+backend/twitter-results/
+backend/results/
+backend/venv/
+backend/sentiment-model/
+.env
+__pycache__/
+*.pyc
+dist/
