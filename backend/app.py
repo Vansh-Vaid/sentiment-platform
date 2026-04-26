@@ -1,8 +1,21 @@
 from fastapi import FastAPI
 from textblob import TextBlob
 from fastapi.middleware.cors import CORSMiddleware
+from datetime import datetime
 
 app = FastAPI()
+
+# ✅ CORS FIRST (important)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ✅ In-memory history
+history = []
 
 @app.get("/")
 def home():
@@ -20,15 +33,17 @@ def analyze(text: str):
     else:
         sentiment = "NEUTRAL"
 
-    return {
+    result = {
+        "text": text,
         "sentiment": sentiment,
-        "score": round(abs(polarity), 2)
+        "score": round(abs(polarity), 2),
+        "time": datetime.now().strftime("%H:%M:%S")
     }
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # allow all (for now)
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+    history.insert(0, result)
+
+    return result
+
+@app.get("/history")
+def get_history():
+    return history[:10]
