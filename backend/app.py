@@ -47,3 +47,16 @@ def analyze(text: str):
 @app.get("/history")
 def get_history():
     return history[:10]
+
+@app.get("/stats")
+def get_stats():
+    stats = {
+        "POSITIVE": 0,
+        "NEGATIVE": 0,
+        "NEUTRAL": 0
+    }
+
+    for item in history:
+        stats[item["sentiment"]] += 1
+
+    return stats
