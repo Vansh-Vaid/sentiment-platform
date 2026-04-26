@@ -1,9 +1,10 @@
 from fastapi import FastAPI
-from textblob import TextBlob
+from transformers import pipeline
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 
 app = FastAPI()
+sentiment_model = pipeline("sentiment-analysis")
 
 # ✅ CORS FIRST (important)
 app.add_middleware(
